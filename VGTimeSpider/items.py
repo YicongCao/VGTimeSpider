@@ -18,6 +18,7 @@ class GameItem(scrapy.Item):
     name = scrapy.Field()
     nickname = scrapy.Field()
     score = scrapy.Field()
+    count = scrapy.Field()
     platform = scrapy.Field()
     date = scrapy.Field()
     dna = scrapy.Field()

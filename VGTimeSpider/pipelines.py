@@ -32,7 +32,7 @@ class VgtimespiderPipelineCsv(object):
     def __init__(self):
         self.file = open('gamedata.csv', 'w', encoding='utf-8')
         self.writer = csv.writer(self.file)
-        self.writer.writerow(["name", "nickname", "score",
+        self.writer.writerow(["name", "nickname", "score", "count",
                               "platform", "date", "dna", "company", "tag", "url"])
 
     # 处理结束后关闭文件IO流
@@ -41,6 +41,6 @@ class VgtimespiderPipelineCsv(object):
 
     # 将Item实例导出到csv文件
     def process_item(self, item, spider):
-        self.writer.writerow([item["name"], item["nickname"], item["score"], item["platform"],
+        self.writer.writerow([item["name"], item["nickname"], item["score"], item["count"], item["platform"],
                               item["date"], item["dna"], item["company"], item["tag"], item["url"]])
         return item

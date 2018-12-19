@@ -42,6 +42,8 @@ class GameSpider(scrapy.Spider):
                 'div[@class="game_box main"]/p/text()').extract_first(default='')
             game_score = game.xpath(
                 '//span[@class="game_score showlist"]//text()').extract_first(default='-1')
+            game_count = game.xpath(
+                '//span[@class="game_count showlist"]//text()').extract_first(default="-1")
             game_descri = game.xpath(
                 '//div[@class="game_descri"]/div[@class="descri_box"]')
 
@@ -49,6 +51,9 @@ class GameSpider(scrapy.Spider):
                 item['name'] = game_name
                 item['nickname'] = game_nickname
                 item['score'] = float(game_score)
+                game_count = str(game_count).replace(
+                    "位玩家评分", "").replace(" ", "")
+                item['count'] = int(game_count)
 
                 if game_descri:
                     for game_sub_descri in game_descri:

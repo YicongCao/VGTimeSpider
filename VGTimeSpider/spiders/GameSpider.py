@@ -46,6 +46,8 @@ class GameSpider(scrapy.Spider):
                 '//span[@class="game_count showlist"]//text()').extract_first(default="-1")
             game_descri = game.xpath(
                 '//div[@class="game_descri"]/div[@class="descri_box"]')
+            game_imgs = game.xpath(
+                '//img/@src').extract()
 
             if game_name != '':
                 item['name'] = game_name
@@ -54,6 +56,12 @@ class GameSpider(scrapy.Spider):
                 game_count = str(game_count).replace(
                     "位玩家评分", "").replace(" ", "")
                 item['count'] = int(game_count)
+                for game_img in game_imgs:
+                    if 'cover' in game_img and '.jpg' in game_img:
+                        game_img = urllib.parse.urljoin(self.url, game_img)
+                        game_img = str(game_img)[:str(game_img).find('.jpg')+4]
+                        item['img'] = game_img
+                        break
 
                 if game_descri:
                     for game_sub_descri in game_descri:

@@ -25,6 +25,7 @@ class GameItem(scrapy.Item):
     company = scrapy.Field()
     tag = scrapy.Field()
     url = scrapy.Field()
+    img = scrapy.Field()
 
 
 class TopicItem(scrapy.Item):

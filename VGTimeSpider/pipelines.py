@@ -44,3 +44,18 @@ class VgtimespiderPipelineCsv(object):
         self.writer.writerow([item["name"], item["nickname"], item["score"], item["count"], item["platform"],
                               item["date"], item["dna"], item["company"], item["tag"], item["url"]])
         return item
+
+
+class VgtimespiderPipelineTopicTxt(object):
+    # 语料导出（单文本），用于NLU
+    def __init__(self):
+        self.file = codecs.open('topic.txt', 'w', encoding='utf-8')
+
+    # 处理结束后关闭文件IO流
+    def close_spider(self, spider):
+        self.file.close()
+
+    # 将Item实例导出到json文件
+    def process_item(self, item, spider):
+        self.file.write(item["article"] + '\r\n===\r\n')
+        return item

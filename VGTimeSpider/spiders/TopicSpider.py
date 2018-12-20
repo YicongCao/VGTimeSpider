@@ -46,8 +46,10 @@ class TopicSpider(scrapy.Spider):
             para = self.converter.handle(article_raw)
             if len(str(para)) > 50:
                 article = article + para + '\r\n'
-        if len(article) > 50:
+        bypass = any(x in article for x in ['VG聊天室', '本期听点'])
+        if len(article) > 50 and not bypass:
             item = TopicItem()
+            article = response.url + '\r\n' + article + '\r\n===\r\n\r\n'
             item['article'] = article
             yield item
         '''
@@ -55,8 +57,8 @@ class TopicSpider(scrapy.Spider):
         '''
         next_pages = selector.xpath('//a/@href').extract()
         for page in next_pages:
-            if any(x in page for x in ['topic', 'forum', 'game', 'shop', 'video']):
+            if any(x in page for x in ['topic', 'game']):
                 page = urllib.parse.urljoin(self.url, page)
-                if page not in self.seen_urls:
+                if page not in self.seen_urls and 'vgtime.com' in page:
                     self.seen_urls.add(page)
                     yield scrapy.Request(page, callback=self.parse)

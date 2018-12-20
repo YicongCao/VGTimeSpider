@@ -99,7 +99,7 @@ class GameSpider(scrapy.Spider):
         '''
         next_pages = selector.xpath('//a/@href').extract()
         for page in next_pages:
-            if 'game' in page:
+            if any(x in page for x in ['topic', 'game']):
                 page = urllib.parse.urljoin(self.url, page)
                 if page not in self.seen_urls:
                     self.seen_urls.add(page)

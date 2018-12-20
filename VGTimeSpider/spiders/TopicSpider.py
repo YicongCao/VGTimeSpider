@@ -55,7 +55,7 @@ class TopicSpider(scrapy.Spider):
         '''
         next_pages = selector.xpath('//a/@href').extract()
         for page in next_pages:
-            if 'topic' in page:
+            if any(x in page for x in ['topic', 'forum', 'game', 'shop', 'video']):
                 page = urllib.parse.urljoin(self.url, page)
                 if page not in self.seen_urls:
                     self.seen_urls.add(page)

@@ -29,6 +29,8 @@ class TopicSpider(scrapy.Spider):
     converter = html2text.HTML2Text()
     converter.ignore_images = True
     converter.ignore_emphasis = True
+    converter.ignore_links = True
+    converter.ignore_tables = True
     converter.strong_mark = ''
 
     def parse(self, response):

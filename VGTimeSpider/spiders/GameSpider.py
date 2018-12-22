@@ -128,7 +128,7 @@ class GameSpider(scrapy.Spider):
                 if len(str(para)) > 50:
                     article = article + para + '\r\n'
             bypass = any(x in article for x in [
-                         'VG聊天室', '本期听点', '新游月谈', '网易云音乐'])
+                         'VG聊天室', '本期听点', '新游月谈'])
             if len(article) > 50 and not bypass:
                 topic_item = TopicItem()
                 article = response.url + '\r\n' + article + '\r\n===\r\n\r\n'

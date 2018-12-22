@@ -82,6 +82,10 @@ class GameSpider(scrapy.Spider):
                     print(game_name + ' find no img')
 
                 if game_descri:
+                    game_platform = []
+                    game_date = '1970-01-01'
+                    game_dna = []
+                    game_company = 'null'
                     for game_sub_descri in game_descri:
                         caption = game_sub_descri.xpath(
                             'p/text()').extract_first(default='')

@@ -9,6 +9,8 @@
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
+import os
+
 BOT_NAME = 'VGTimeSpider'
 
 SPIDER_MODULES = ['VGTimeSpider.spiders']
@@ -97,3 +99,9 @@ ITEM_PIPELINES = {
 DEPTH_PRIORITY = 1
 SCHEDULER_DISK_QUEUE = 'scrapy.squeues.PickleFifoDiskQueue'
 SCHEDULER_MEMORY_QUEUE = 'scrapy.squeues.FifoMemoryQueue'
+
+# 项目路径
+PROJECT_DIR = os.path.abspath(os.path.curdir)
+
+# 异步任务队列
+BROKER_URL = 'redis://127.0.0.1:6379'

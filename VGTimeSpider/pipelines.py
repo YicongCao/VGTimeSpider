@@ -49,7 +49,7 @@ class VgtimespiderPipelineCsv(object):
 class VgtimespiderPipelineTopicTxt(object):
     # 语料导出（单文本），用于NLU
     def __init__(self):
-        self.file = codecs.open('topic.txt', 'w', encoding='utf-8')
+        self.file = codecs.open('gametopic.txt', 'w', encoding='utf-8')
 
     # 处理结束后关闭文件IO流
     def close_spider(self, spider):

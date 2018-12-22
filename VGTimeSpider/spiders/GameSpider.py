@@ -56,12 +56,16 @@ class GameSpider(scrapy.Spider):
                 game_count = str(game_count).replace(
                     "位玩家评分", "").replace(" ", "")
                 item['count'] = int(game_count)
+                item['img'] = ''
                 for game_img in game_imgs:
-                    if 'cover' in game_img and '.jpg' in game_img:
+                    if ('cover' in game_img or 'photo' in game_img) and '.jpg' in game_img:
                         game_img = urllib.parse.urljoin(self.url, game_img)
                         game_img = str(game_img)[:str(game_img).find('.jpg')+4]
                         item['img'] = game_img
                         break
+
+                if str(item['img']) == '' or not item['img']:
+                    i = 3
 
                 if game_descri:
                     for game_sub_descri in game_descri:
@@ -101,6 +105,6 @@ class GameSpider(scrapy.Spider):
         for page in next_pages:
             if any(x in page for x in ['topic', 'game']):
                 page = urllib.parse.urljoin(self.url, page)
-                if page not in self.seen_urls:
+                if page not in self.seen_urls and 'vgtime.com' in page:
                     self.seen_urls.add(page)
                     yield scrapy.Request(page, callback=self.parse)

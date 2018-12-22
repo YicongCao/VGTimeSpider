@@ -5,7 +5,9 @@
 # your spiders.
 import scrapy
 import urllib.parse
-from VGTimeSpider.items import GameItem
+from VGTimeSpider.items import GameItem, TopicItem
+from scrapy.selector import HtmlXPathSelector
+import html2text
 
 
 class GameSpider(scrapy.Spider):
@@ -27,8 +29,14 @@ class GameSpider(scrapy.Spider):
     start_urls = ['https://www.vgtime.com/game/index.jhtml']
     seen_urls = set()
 
+    converter = html2text.HTML2Text()
+    converter.ignore_images = True
+    converter.ignore_emphasis = True
+    converter.ignore_links = True
+    converter.ignore_tables = True
+    converter.strong_mark = ''
+
     def parse(self, response):
-        item = GameItem()
         selector = scrapy.Selector(response)
         '''
         示例游戏页面: https://www.vgtime.com/game/4446.jhtml
@@ -36,6 +44,7 @@ class GameSpider(scrapy.Spider):
         '''
         game = selector.xpath('//section[@class="game_main"]')
         if game:
+            game_item = GameItem()
             game_name = game.xpath(
                 'div[@class="game_box main"]/h2/a/text()').extract_first(default='')
             game_nickname = game.xpath(
@@ -46,26 +55,31 @@ class GameSpider(scrapy.Spider):
                 '//span[@class="game_count showlist"]//text()').extract_first(default="-1")
             game_descri = game.xpath(
                 '//div[@class="game_descri"]/div[@class="descri_box"]')
-            game_imgs = game.xpath(
+            game_imgs = selector.xpath(
                 '//img/@src').extract()
 
             if game_name != '':
-                item['name'] = game_name
-                item['nickname'] = game_nickname
-                item['score'] = float(game_score)
+                game_item['name'] = game_name
+                game_item['nickname'] = game_nickname
+                game_item['score'] = float(game_score)
                 game_count = str(game_count).replace(
                     "位玩家评分", "").replace(" ", "")
-                item['count'] = int(game_count)
-                item['img'] = ''
+                game_item['count'] = int(game_count)
+                game_item['img'] = ''
                 for game_img in game_imgs:
-                    if ('cover' in game_img or 'photo' in game_img) and '.jpg' in game_img:
+                    if (any(x in game_img for x in ['cover', 'photo', 'w_300'])) and (any(x in game_img for x in ['.jpg', '.png'])):
                         game_img = urllib.parse.urljoin(self.url, game_img)
-                        game_img = str(game_img)[:str(game_img).find('.jpg')+4]
-                        item['img'] = game_img
+                        suffix_idx = str(game_img).find('.jpg')
+                        if suffix_idx == -1:
+                            suffix_idx = str(game_img).find('.png')
+                        if suffix_idx == -1:
+                            continue
+                        game_img = str(game_img)[:suffix_idx+4]
+                        game_item['img'] = game_img
                         break
 
-                if str(item['img']) == '' or not item['img']:
-                    i = 3
+                if str(game_item['img']) == '' or not game_item['img']:
+                    print(game_name + ' find no img')
 
                 if game_descri:
                     for game_sub_descri in game_descri:
@@ -87,23 +101,41 @@ class GameSpider(scrapy.Spider):
                                 game_company = game_sub_descri.xpath(
                                     'a/text()').extract_first()
 
-                    item['platform'] = game_platform
-                    item['date'] = game_date
-                    item['dna'] = game_dna
-                    item['company'] = game_company
+                    game_item['platform'] = game_platform
+                    game_item['date'] = game_date
+                    game_item['dna'] = game_dna
+                    game_item['company'] = game_company
 
                 game_tags = game.xpath(
                     '//div[@class="game_gene"]/span/a/text()').extract()
-                item['tag'] = game_tags
-                item['url'] = response.url
+                game_item['tag'] = game_tags
+                game_item['url'] = response.url
 
-                yield item
+                yield game_item
+        '''
+        示例文章页面: http://www.vgtime.com/topic/1042146.jhtml
+        爬取article标签下的所有文本，用于NLU分析
+        '''
+        if 'topic' in response.url:
+            articles_raw = selector.select("//article").extract()
+            article = ''
+            for article_raw in articles_raw:
+                para = self.converter.handle(article_raw)
+                if len(str(para)) > 50:
+                    article = article + para + '\r\n'
+            bypass = any(x in article for x in [
+                         'VG聊天室', '本期听点', '新游月谈', '网易云音乐'])
+            if len(article) > 50 and not bypass:
+                topic_item = TopicItem()
+                article = response.url + '\r\n' + article + '\r\n===\r\n\r\n'
+                topic_item['article'] = article
+                yield topic_item
         '''
         抓取剩下的游戏详情页面链接
         '''
         next_pages = selector.xpath('//a/@href').extract()
         for page in next_pages:
-            if any(x in page for x in ['topic', 'game']):
+            if any(x in page for x in ['topic', 'game', 'forum']):
                 page = urllib.parse.urljoin(self.url, page)
                 if page not in self.seen_urls and 'vgtime.com' in page:
                     self.seen_urls.add(page)

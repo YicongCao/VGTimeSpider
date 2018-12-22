@@ -69,7 +69,7 @@ COOKIES_ENABLED = True
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'VGTimeSpider.pipelines.VgtimespiderPipelineCsv': 300,
+    'VGTimeSpider.pipelines.VgtimespiderPipelineGeneral': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

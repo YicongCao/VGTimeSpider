@@ -30,7 +30,7 @@ values ("{name}", "{nickname}", "{score}", "{pop}", "{date}", "{dna}", "{company
 
 QUERY_BY_NAME = '''
 select *
-from games where name LIKE "%{name}%" or nickname LIKE "%{name}%"
+from games where name LIKE "%{name}%" or nickname LIKE "%{name}%" order by pop desc
 '''
 
 conn = sqlite3.connect('gamesqlite.db')

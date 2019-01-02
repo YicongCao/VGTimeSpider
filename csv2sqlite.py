@@ -16,6 +16,7 @@ create table games
     pop int default -1,
     date varchar(255) default '1970-01-01',
     dna varchar(255) default 'nodna',
+    platform varchar(255) default 'noplatform',
     company varchar(255) default 'nocompany',
     tag varchar(255) default 'notag',
     url varchar(255) default 'https://www.vgtime.com',
@@ -24,8 +25,8 @@ create table games
 '''
 
 INSERT_DATA = '''
-insert into games (name, nickname, score, pop, date, dna, company, tag, url, img)
-values ("{name}", "{nickname}", "{score}", "{pop}", "{date}", "{dna}", "{company}", "{tag}", "{url}", "{img}")
+insert into games (name, nickname, score, pop, date, dna, company, platform, tag, url, img)
+values ("{name}", "{nickname}", "{score}", "{pop}", "{date}", "{dna}", "{company}", "{platform}", "{tag}", "{url}", "{img}")
 '''
 
 QUERY_BY_NAME = '''
@@ -37,10 +38,13 @@ conn = sqlite3.connect('gamesqlite.db')
 cursor = conn.cursor()
 cursor.execute(CLEAR_TABLE)
 cursor.execute(CREATE_TABLE)
+gameset = set()
 
 with open('gamedata.csv', 'r', encoding='utf-8') as f:
     reader = csv.DictReader(f)
     for line in reader:
+        if line['name'] in gameset:
+            continue
         columns = {}
         columns['name'] = line['name']
         columns['nickname'] = line['nickname']
@@ -54,6 +58,7 @@ with open('gamedata.csv', 'r', encoding='utf-8') as f:
         columns['url'] = line['url']
         columns['img'] = line['img']
         cursor.execute(INSERT_DATA.format(**columns))
+        gameset.add(line['name'])
 
 print('insert {0} lines'.format(cursor.rowcount))
 cursor.close()

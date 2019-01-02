@@ -60,8 +60,5 @@ for url in topic_url:
         # topic_file.flush()
         print(content + "\r\n======\r\n")
     # sleep(0.01)
-    # if error_count > 3:
-    #     print('error too many times')
-    #     break
 
 topic_file.close()

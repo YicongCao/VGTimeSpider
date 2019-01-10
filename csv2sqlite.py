@@ -34,6 +34,23 @@ select *
 from games where name LIKE "%{name}%" or nickname LIKE "%{name}%" order by pop desc
 '''
 
+
+def NounReplace(sourcestr):
+    targetstr = str(sourcestr).strip().replace("Microsoft", "微软")
+    targetstr = targetstr.replace(
+        "Nintendo", "任天堂").replace("Naughty Dog", "顽皮狗")
+    targetstr = targetstr.replace(
+        "Rockstar Games", "R星").replace("CAPCOM", "卡普空")
+    targetstr = targetstr.replace("Blizzard", "暴雪").replace("Ubisoft", "育碧")
+    targetstr = targetstr.replace("SEGA", "世嘉").replace(
+        "Sony Interactive Entertainment", "索尼")
+    targetstr = targetstr.replace("Sony", "索尼").replace("SONY", "索尼")
+    targetstr = targetstr.replace("角色扮演", "角色扮演 RPG").replace("射击", "射击 FPS")
+    targetstr = targetstr.replace("动作", "动作 ACT").replace("多人", "MOBA MMO")
+    targetstr = targetstr.replace("XBone", "Xbox").replace("Switch", "switch")
+    return targetstr
+
+
 conn = sqlite3.connect('gamesqlite.db')
 cursor = conn.cursor()
 cursor.execute(CLEAR_TABLE)
@@ -50,10 +67,10 @@ with open('gamedata.csv', 'r', encoding='utf-8') as f:
         columns['nickname'] = line['nickname']
         columns['score'] = line['score']
         columns['pop'] = line['count']
-        columns['platform'] = line['platform']
+        columns['platform'] = NounReplace(line['platform'])
         columns['date'] = line['date']
-        columns['dna'] = line['dna']
-        columns['company'] = line['company']
+        columns['dna'] = NounReplace(line['dna'])
+        columns['company'] = NounReplace(line['company'])
         columns['tag'] = 'null'
         columns['url'] = line['url']
         columns['img'] = line['img']

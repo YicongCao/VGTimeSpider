@@ -1,5 +1,20 @@
 ## VGTime 爬虫
 
+兴趣爱好所使，开发了主机游戏相关的如下四个工程：
+
+- VGTimeSpider
+- VGTimeBackend
+- RasaNLUForGamer
+- GamebotPreVue
+
+前者是爬虫，中间是所爬游戏库的查询后端。其中，爬虫不仅仅爬取 VGTime 游戏时光 网站上的游戏库，还抓取了近两年的游戏新闻，新闻语料用来训练 NLU 服务，也就是第三个工程。
+
+NLU 服务可以用来理解用户提问，游戏库查询后端包括提问中游戏的详细信息，爬虫随时可以补充语料、游戏库。
+
+这个工程，也就是为后面功能提供数据来源的爬虫工程。可以抓取 游戏库信息、建立 sqlite 数据库，并爬取近两年的游戏新闻语料。
+
+![GamebotDemo](https://ws3.sinaimg.cn/large/006tNc79gy1fz9m009ll8j30ef0bizm5.jpg)
+
 ### 依赖项
 
 ```bash
@@ -8,8 +23,6 @@ html2text>=3.0.0	# 提取HTML正文
 celery>=3.1.23		# 异步框架
 redis>=5.0.1		# 用作celery的后端
 ```
-
-
 
 ### 打开方式
 

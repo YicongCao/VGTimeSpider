@@ -48,7 +48,7 @@ def NounReplace(sourcestr):
     targetstr = targetstr.replace("角色扮演", "角色扮演 RPG").replace("射击", "射击 FPS")
     targetstr = targetstr.replace("动作", "动作 ACT").replace("多人", "MOBA MMO")
     targetstr = targetstr.replace("XBone", "Xbox").replace("Switch", "switch")
-    targetstr = targetstr.replace("马里欧", "马里奥")
+    targetstr = targetstr.replace("马里欧", "马里奥").replace("马力欧", "马里奥")
     return targetstr
 
 
@@ -64,7 +64,7 @@ with open('gamedata.csv', 'r', encoding='utf-8') as f:
         if line['name'] in gameset:
             continue
         columns = {}
-        columns['name'] = line['name']
+        columns['name'] = NounReplace(line['name'])
         columns['nickname'] = line['nickname']
         columns['score'] = line['score']
         columns['pop'] = line['count']

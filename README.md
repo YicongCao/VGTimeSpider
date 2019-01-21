@@ -32,7 +32,7 @@ redis>=5.0.1		# 用作celery的后端
 
 ```bash
 # 依赖项
-redis &
+redis-server &
 celery -A VGTimeSpider.tools.asynctask worker --loglevel=info
 
 # 执行爬虫
